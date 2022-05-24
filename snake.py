@@ -7,6 +7,7 @@ import random
 Coś tam zrobiłam ale wymaga dopracowania XD, w każdym razie poczatek mamy
 wymiary kratki - 50x50px
 wielkosc okna 600x600px
+MAMY NEVERENDINGSTORYYY
 -----------------------------------"""
 class Apple():
     def __init__(self, okno, kratka):
@@ -19,6 +20,11 @@ class Apple():
         self.okno.blit(self.image, (self.x, self.y))
         pygame.display.flip()
 
+    def new_position(self, kratka):
+        self.x=random.randint(0,29)*kratka #zeby nam nie wywalilo poza okno - (900-30)=870, 29*30=870
+        self.y=random.randint(0,19)*kratka
+
+
 class Snake():
     def __init__(self, okno, dlugosc, kratka):
         self.dlugosc = dlugosc
@@ -28,7 +34,12 @@ class Snake():
         self.size= kratka
         self.x = [self.size]*dlugosc
         self.y =[self.size]*dlugosc
-        self.direction = "up"
+        self.direction = "down"
+
+    def dodaj_ogon(self):
+        self.dlugosc+=1
+        self.x.append(-1)
+        self.y.append(-1)
 
     def draw(self):
         self.okno.fill((93,185,127))
@@ -66,6 +77,9 @@ class Snake():
             self.x[0]+=self.size
             self.draw()
 
+    # def is_dead(self, scrn_width, scrn_height):
+    #     if self.x
+
 class Snakegame():
     def __init__(self):
         pygame.init()
@@ -74,19 +88,22 @@ class Snakegame():
         self.surface = pygame.display.set_mode((self.scrn_width, self.scrn_height)) #rysuje powierzchnie do gry
         self.surface.fill((93,185,127)) #kolorek, wybralam taki brzydki, ale to sie zmieni
         self.kratka = 30
-        self.snake=Snake(self.surface,5,self.kratka) #idk, zeby bylo latwiej na razie snake jest z dlugoscia 5 zeby bylo widac jak dziala (gra w powijakach! xd0
+        self.snake=Snake(self.surface,1,self.kratka) #idk, zeby bylo latwiej na razie snake jest z dlugoscia 5 zeby bylo widac jak dziala (gra w powijakach! xd0
         self.snake.draw()
         self.apple = Apple(self.surface, self.kratka)
         self.apple.draw()
-        self.points=0
 
     def eat_apple(self, x1, y1, x2, y2): #sprawdza czy snake zjadl jablko
         if x1==x2 and y1==y2:
-            self.points+=1
-            print(self.points)
+            self.snake.dodaj_ogon()
             return True
         else:
             return False
+
+    def show_score(self):
+        font = pygame.font.SysFont('comicsans',30)
+        score = font.render(f"Points: {self.snake.dlugosc - 1}", True, (255,255,255))
+        self.surface.blit(score, (self.scrn_width - 300,10))
 
 
     def run(self):
@@ -107,12 +124,12 @@ class Snakegame():
                     elif event.key == K_LEFT:
                         self.snake.move("left")
             if self.eat_apple(self.snake.x[0],self.snake.y[0],self.apple.x,self.apple.y):
-                #czary mary, jablko zmienia pozycje (Trzeba zrobic randoma)
-                self.apple.x=random.randint(0,29)*self.kratka #random.randint(0,550) - kratka ma 50! - ale jeszcze trzeba zrobić zeby losowalo co 50, bo dziwnie inaczej
-                self.apple.y=random.randint(0,19)*self.kratka
+                self.apple.new_position(self.kratka)
             self.snake.walk()
             self.apple.draw()
-            time.sleep(0.3)
+            self.show_score()
+            pygame.display.flip()
+            time.sleep(0.2)
 
 
 game = Snakegame()
