@@ -34,7 +34,7 @@ class Snake():
             self.okno.blit(self.block, (self.x[i], self.y[i]))
         pygame.display.flip()
 
-    def move(self, key):
+    def move(self, key): #nadaje kierunek wezowi
         if key=="up":
             self.direction="up"
         elif key=="down":
@@ -44,7 +44,7 @@ class Snake():
         elif key=="right":
             self.direction="right"
 
-    def walk(self):
+    def walk(self): #robi żeby szedl klocek za klockiem
         for i in range(self.dlugosc-1,0,-1):
             self.x[i]=self.x[i-1]
             self.y[i]=self.y[i-1]
@@ -66,17 +66,26 @@ class Snakegame():
     def __init__(self):
         pygame.init()
         pygame.display.set_caption("Snake z przeszkodami")
-        self.surface = pygame.display.set_mode((600, 600))
-        self.surface.fill((93,185,127))
-        self.snake=Snake(self.surface,5)
+        self.surface = pygame.display.set_mode((600, 600)) #rysuje powierzchnie do gry
+        self.surface.fill((93,185,127)) #kolorek, wybralam taki brzydki, ale to sie zmieni 
+        self.snake=Snake(self.surface,5) #idk, zeby bylo latwiej na razie snake jest z dlugoscia 5 zeby bylo widac jak dziala (gra w powijakach! xd0
         self.snake.draw()
         self.apple = Apple(self.surface)
         self.apple.draw()
+        self.points=0
+        
+    def eat_apple(self, x1, y1, x2, y2): #sprawdza czy snake zjadl jablko
+        if x1==x2 and y1==y2:
+            self.points+=1
+            print(self.points)
+            return True
+        else:
+            return False
 
     def run(self):
         game = True
         while game:
-            for event in pygame.event.get():
+            for event in pygame.event.get(): #pobiera info o klawiszach
                 if event.type == pygame.QUIT:
                     game = False
                 elif event.type == KEYDOWN:
@@ -90,6 +99,10 @@ class Snakegame():
                         self.snake.move("right")
                     elif event.key == K_LEFT:
                         self.snake.move("left")
+            if self.eat_apple(self.snake.x[0],self.snake.y[0],self.apple.x,self.apple.y): 
+                #czary mary, jablko zmienia pozycje (Trzeba zrobic randoma)
+                self.apple.x=500 #random.randint(0,550) - kratka ma 50! - ale jeszcze trzeba zrobić zeby losowalo co 50, bo dziwnie inaczej
+                self.apple.y=300
             self.snake.walk()
             self.apple.draw()
             time.sleep(0.3)
