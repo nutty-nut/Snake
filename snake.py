@@ -12,15 +12,18 @@ MAMY NEVERENDINGSTORYYY
 class Apple():
     def __init__(self, okno, kratka):
         self.image = pygame.image.load("apple.png").convert()
+        self.owoce= [pygame.image.load("apple.png").convert(), pygame.image.load("cucumber.png").convert(),pygame.image.load("banana.png").convert(), pygame.image.load("cherry.png").convert(),pygame.image.load("orange.png").convert()]
         self.okno = okno
         self.size = kratka
         self.x, self.y = 5*self.size, 2*self.size #polozenie jablka na planszy (wspolrzedne)
 
     def draw(self):
+
         self.okno.blit(self.image, (self.x, self.y))
         pygame.display.flip()
 
     def new_position(self, kratka):
+        self.image=random.choice(self.owoce)
         self.x=random.randint(0,29)*kratka #zeby nam nie wywalilo poza okno - (900-30)=870, 29*30=870
         self.y=random.randint(0,19)*kratka
 
@@ -29,8 +32,8 @@ class Snake():
     def __init__(self, okno, dlugosc, kratka):
         self.dlugosc = dlugosc
         self.okno = okno
-        self.head = pygame.image.load("head.png").convert()
-        self.block = pygame.image.load("klocek.png").convert()
+        self.head = pygame.image.load("hd.png").convert()
+        self.block = pygame.image.load("kl.png").convert()
         self.size= kratka
         self.x = [self.size]*dlugosc
         self.y =[self.size]*dlugosc
@@ -42,7 +45,7 @@ class Snake():
         self.y.append(-1)
 
     def draw(self):
-        self.okno.fill((93,185,127))
+        self.okno.fill((0,64,0))
         for i in range(self.dlugosc):
             if i==0:
                 self.okno.blit(self.head, (self.x[i], self.y[i]))
@@ -86,7 +89,7 @@ class Snakegame():
         pygame.display.set_caption("Snake z przeszkodami")
         self.scrn_width, self.scrn_height = 900, 600
         self.surface = pygame.display.set_mode((self.scrn_width, self.scrn_height)) #rysuje powierzchnie do gry
-        self.surface.fill((93,185,127)) #kolorek, wybralam taki brzydki, ale to sie zmieni
+        self.surface.fill((0,64,0)) #kolorek, wybralam taki brzydki, ale to sie zmieni
         self.kratka = 30
         self.snake=Snake(self.surface,1,self.kratka) #idk, zeby bylo latwiej na razie snake jest z dlugoscia 5 zeby bylo widac jak dziala (gra w powijakach! xd0
         self.snake.draw()
@@ -129,7 +132,7 @@ class Snakegame():
             self.apple.draw()
             self.show_score()
             pygame.display.flip()
-            time.sleep(0.2)
+            time.sleep(0.1)
 
 
 game = Snakegame()
