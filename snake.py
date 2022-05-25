@@ -5,25 +5,24 @@ import time
 import random
 """----------------------------
 Coś tam zrobiłam ale wymaga dopracowania XD, w każdym razie poczatek mamy
-wymiary kratki - 50x50px
-wielkosc okna 600x600px
+wymiary kratki - 30x30px - takie wymiary rysunkow!!!!
+wielkosc okna 900x600px
 MAMY NEVERENDINGSTORYYY
 -----------------------------------"""
 class Apple():
     def __init__(self, okno, kratka):
-        self.image = pygame.image.load("apple.png").convert()
+        self.image = pygame.image.load("apple.png").convert() 
         self.owoce= [pygame.image.load("apple.png").convert(), pygame.image.load("cucumber.png").convert(),pygame.image.load("banana.png").convert(), pygame.image.load("cherry.png").convert(),pygame.image.load("orange.png").convert()]
         self.okno = okno
         self.size = kratka
-        self.x, self.y = 5*self.size, 2*self.size #polozenie jablka na planszy (wspolrzedne)
+        self.x, self.y = 5*self.size, 2*self.size #POCZATKOWE polozenie jablka na planszy (wspolrzedne)
 
     def draw(self):
-
         self.okno.blit(self.image, (self.x, self.y))
         pygame.display.flip()
 
     def new_position(self, kratka):
-        self.image=random.choice(self.owoce)
+        self.image=random.choice(self.owoce) #zeby bylo ciekawie wiecej owockow!
         self.x=random.randint(0,29)*kratka #zeby nam nie wywalilo poza okno - (900-30)=870, 29*30=870
         self.y=random.randint(0,19)*kratka
 
@@ -32,12 +31,12 @@ class Snake():
     def __init__(self, okno, dlugosc, kratka):
         self.dlugosc = dlugosc
         self.okno = okno
-        self.head = pygame.image.load("hd.png").convert()
+        self.head = pygame.image.load("hd.png").convert() #glowa nie moze byc taka sama jak cialko, potrzeba oczu
         self.block = pygame.image.load("kl.png").convert()
         self.size= kratka
         self.x = [self.size]*dlugosc
         self.y =[self.size]*dlugosc
-        self.direction = "down"
+        self.direction = "down" #kierunek na poczatku
 
     def dodaj_ogon(self):
         self.dlugosc+=1
@@ -84,23 +83,22 @@ class Snake():
             self.x[0]+=self.size
             self.draw()
 
-    # def is_dead(self, scrn_width, scrn_height):
-    #     if self.x
+    # def is_dead(self(:
 
 class Snakegame():
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption("Snake z przeszkodami")
-        self.scrn_width, self.scrn_height = 900, 600
+        pygame.display.set_caption("Snake z przeszkodami") #nazwa gry
+        self.scrn_width, self.scrn_height = 900, 600 
         self.surface = pygame.display.set_mode((self.scrn_width, self.scrn_height)) #rysuje powierzchnie do gry
-        self.surface.fill((0,64,0)) #kolorek, wybralam taki brzydki, ale to sie zmieni
+        self.surface.fill((0,64,0)) #kolorek, wybralam taki (teraz chyba juz ladny), ale ocencie sami
         self.kratka = 30
-        self.snake=Snake(self.surface,1,self.kratka) #idk, zeby bylo latwiej na razie snake jest z dlugoscia 5 zeby bylo widac jak dziala (gra w powijakach! xd0
-        self.snake.draw()
+        self.snake=Snake(self.surface,1,self.kratka) #snake, na poczatku ma dlugosc 1
+        self.snake.draw() #rysuje snake'a
         self.apple = Apple(self.surface, self.kratka)
         self.apple.draw()
 
-    def eat_apple(self, x1, y1, x2, y2): #sprawdza czy snake zjadl jablko
+    def eat_apple(self, x1, y1, x2, y2): #sprawdza czy snake zjadl jablko (jego glowa na miejscu owocu)
         if x1==x2 and y1==y2:
             self.snake.dodaj_ogon()
             return True
@@ -108,21 +106,22 @@ class Snakegame():
             return False
 
     def show_score(self):
-        font = pygame.font.SysFont('comicsans',30)
-        score = font.render(f"Points: {self.snake.dlugosc - 1}", True, (255,255,255))
-        self.surface.blit(score, (self.scrn_width - 300,10))
+        font = pygame.font.SysFont('comicsans',30) #ustala wlasciwosci czcionki
+        score = font.render(f"Points: {self.snake.dlugosc - 1}", True, (255,255,255)) #kolor bialy, mozna zmienic ale imo jest ok
+        self.surface.blit(score, (self.scrn_width - 300,10)) #pokazuje punkty
 
 
     def run(self):
         game = True
         while game:
             for event in pygame.event.get(): #pobiera info o klawiszach
-                if event.type == pygame.QUIT:
+                if event.type == pygame.QUIT: #zamyka okno
                     game = False
                 elif event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
+                    if event.key == K_ESCAPE: 
                         game=False
-                    elif event.key == K_UP:
+                    #rusza snake'm
+                    elif event.key == K_UP: 
                         self.snake.move("up")
                     elif event.key == K_DOWN:
                         self.snake.move("down")
@@ -130,13 +129,14 @@ class Snakegame():
                         self.snake.move("right")
                     elif event.key == K_LEFT:
                         self.snake.move("left")
-            if self.eat_apple(self.snake.x[0],self.snake.y[0],self.apple.x,self.apple.y):
+            if self.eat_apple(self.snake.x[0],self.snake.y[0],self.apple.x,self.apple.y): #nowa pozycja dla jablka
                 self.apple.new_position(self.kratka)
-            self.snake.walk()
+            #wyswietla jablko, snake'a i punkty
+            self.snake.walk() 
             self.apple.draw()
-            self.show_score()
-            pygame.display.flip()
-            time.sleep(0.1)
+            self.show_score() 
+            pygame.display.flip() #update obrazu
+            time.sleep(0.1) #im wieksza wartosc tym wolniej snake chodzi
 
 
 game = Snakegame()
