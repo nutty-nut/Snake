@@ -55,13 +55,17 @@ class Snake():
 
     def move(self, key): #nadaje kierunek wezowi
         if key=="up":
-            self.direction="up"
+            if self.direction!="down" or self.dlugosc==1:
+                self.direction="up"
         elif key=="down":
-            self.direction="down"
+            if self.direction!="up" or self.dlugosc==1:
+                self.direction="down"
         elif key=="left":
-            self.direction="left"
+            if self.direction!="right" or self.dlugosc==1:
+                self.direction="left"
         elif key=="right":
-            self.direction="right"
+            if self.direction!="left" or self.dlugosc==1:
+                self.direction="right"
 
     def walk(self): #robi żeby szedl klocek za klockiem
         for i in range(self.dlugosc-1,0,-1):
