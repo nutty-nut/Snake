@@ -1,7 +1,7 @@
 Snake - gra z przeszkodami
-
+Jeszcze trzeba zrobić żeby owocki nie pojawialy sie w miejscu gdzie jest waz
 
 Tomek - przeszkody
 Agata - grafika, tablice
 Sylwia - game over gdy dotknie krawedzi
-Milena - śmierć po wpadnięciu na ogon
+Milena - zjadanie ogona kiedy go dotknie
