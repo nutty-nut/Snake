@@ -98,6 +98,8 @@ class Snakegame():
         self.apple = Apple(self.surface, self.kratka)
         self.apple.draw()
 
+        
+        
     def eat_apple(self, x1, y1, x2, y2): #sprawdza czy snake zjadl jablko (jego glowa na miejscu owocu)
         if x1==x2 and y1==y2:
             self.snake.dodaj_ogon()
@@ -110,6 +112,12 @@ class Snakegame():
         score = font.render(f"Points: {self.snake.dlugosc - 1}", True, (255,255,255)) #kolor bialy, mozna zmienic ale imo jest ok
         self.surface.blit(score, (self.scrn_width - 300,10)) #pokazuje punkty
 
+    def apple_on_tail(self):
+        for i in range(0,self.snake.return_dlugosc()):
+            if self.snake.x[i]==self.apple.x and self.snake.y[i]==self.apple.y:
+                print("japko na ogonie")
+                return True
+        return False        
 
     def run(self):
         game = True
@@ -132,11 +140,22 @@ class Snakegame():
             if self.eat_apple(self.snake.x[0],self.snake.y[0],self.apple.x,self.apple.y): #nowa pozycja dla jablka
                 self.apple.new_position(self.kratka)
             #wyswietla jablko, snake'a i punkty
+            while self.apple_on_tail():
+                self.apple.new_position()            
+            
             self.snake.walk() 
             self.apple.draw()
             self.show_score() 
             pygame.display.flip() #update obrazu
-            time.sleep(0.1) #im wieksza wartosc tym wolniej snake chodzi
+            
+            if self.snake.return_dlugosc()<5:
+                time.sleep(0.2) #im wieksza wartosc tym wolniej snake chodzi
+            elif self.snake.return_dlugosc()>=5 and self.snake.return_dlugosc()<10:
+                time.sleep(0.15)
+            elif self.snake.return_dlugosc()>=10:
+                time.sleep(0.08)
+            elif self.snake.return_dlugosc()>=40:
+                time.sleep(0.05)
 
 
 game = Snakegame()
