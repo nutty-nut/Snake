@@ -21,10 +21,10 @@ class Apple():
         self.okno.blit(self.image, (self.x, self.y))
         pygame.display.flip()
 
-    def new_position(self, kratka):
+    def new_position(self):
         self.image=random.choice(self.owoce) #zeby bylo ciekawie wiecej owockow!
-        self.x=random.randint(0,29)*kratka #zeby nam nie wywalilo poza okno - (900-30)=870, 29*30=870
-        self.y=random.randint(0,19)*kratka
+        self.x=random.randint(0,29)*30 #zeby nam nie wywalilo poza okno - (900-30)=870, 29*30=870
+        self.y=random.randint(0,19)*30
 
 
 class Snake():
@@ -37,6 +37,9 @@ class Snake():
         self.x = [self.size]*dlugosc
         self.y =[self.size]*dlugosc
         self.direction = "down" #kierunek na poczatku
+        
+    def return_dlugosc(self):
+        return self.dlugosc
 
     def dodaj_ogon(self):
         self.dlugosc+=1
@@ -138,7 +141,7 @@ class Snakegame():
                     elif event.key == K_LEFT:
                         self.snake.move("left")
             if self.eat_apple(self.snake.x[0],self.snake.y[0],self.apple.x,self.apple.y): #nowa pozycja dla jablka
-                self.apple.new_position(self.kratka)
+                self.apple.new_position()
             #wyswietla jablko, snake'a i punkty
             while self.apple_on_tail():
                 self.apple.new_position()            
