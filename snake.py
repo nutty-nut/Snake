@@ -129,6 +129,13 @@ class Snakegame():
                         self.snake.move("right")
                     elif event.key == K_LEFT:
                         self.snake.move("left")
+                        
+            #jeśli dotknie ramki - koniec gry [messagebox orientacyjny!]
+            if self.snake.x[0] >= 870 or self.snake.x[0] <= 0 or self.snake.y[0] >= 570 or self.snake.y[0] <= 0:
+                time.sleep(1)
+                #tu może być messagebox z informacją o końcu gry
+                game = False
+                
             if self.eat_apple(self.snake.x[0],self.snake.y[0],self.apple.x,self.apple.y): #nowa pozycja dla jablka
                 self.apple.new_position(self.kratka)
             #wyswietla jablko, snake'a i punkty
