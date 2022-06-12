@@ -26,7 +26,23 @@ class Apple():
         self.x=random.randint(0,29)*30 #zeby nam nie wywalilo poza okno - (900-30)=870, 29*30=870
         self.y=random.randint(0,19)*30
 
+class Kolce():
+    def __init__(self, okno, kratka):
+        self.image = pygame.image.load("spikes2.png").convert()
+        self.kolce= [pygame.image.load("spikes2.png").convert()]
+        self.okno = okno
+        self.size = kratka
+        self.x, self.y = 10*self.size, 7*self.size
 
+    def draw(self):
+        self.okno.blit(self.image, (self.x, self.y))
+        pygame.display.flip()
+
+    def position(self, kratka):
+        self.x=random.randint(0,29)*kratka
+        self.y=random.randint(0,19)*kratka        
+
+        
 class Snake():
     def __init__(self, okno, dlugosc, kratka):
         self.dlugosc = dlugosc
@@ -46,6 +62,11 @@ class Snake():
         self.x.append(-1)
         self.y.append(-1)
 
+    def odejmij_ogon(self):
+        self.dlugosc-=2
+        self.x.append(-1)
+        self.y.append(-1)    
+        
     def draw(self):
         self.okno.fill((0,64,0))
         for i in range(self.dlugosc):
@@ -100,7 +121,8 @@ class Snakegame():
         self.snake.draw() #rysuje snake'a
         self.apple = Apple(self.surface, self.kratka)
         self.apple.draw()
-
+        self.kolce = Kolce(self.surface, self.kratka)
+        self.kolce.draw()
         
         
     def eat_apple(self, x1, y1, x2, y2): #sprawdza czy snake zjadl jablko (jego glowa na miejscu owocu)
@@ -110,6 +132,13 @@ class Snakegame():
         else:
             return False
 
+    def eat_kolce(self, x1, y1, x2, y2):
+        if x1==x2 and y1==y2:
+            self.snake.odejmij_ogon()
+            return True
+        else:
+            return False
+        
     def show_score(self):
         font = pygame.font.SysFont('comicsans',30) #ustala wlasciwosci czcionki
         score = font.render(f"Points: {self.snake.dlugosc - 1}", True, (255,255,255)) #kolor bialy, mozna zmienic ale imo jest ok
@@ -152,10 +181,14 @@ class Snakegame():
             #wyswietla jablko, snake'a i punkty
             while self.apple_on_tail():
                 self.apple.new_position()            
-            
+            if self.eat_kolce(self.snake.x[0],self.snake.y[0],self.kolce.x,self.kolce.y):
+                self.kolce.position(self.kratka)
+                # game = False
+                
             self.snake.walk() 
             self.apple.draw()
-            self.show_score() 
+            self.show_score()
+            self.kolce.draw()
             pygame.display.flip() #update obrazu
             
             if self.snake.return_dlugosc()<5:
