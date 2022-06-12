@@ -121,8 +121,11 @@ class Snakegame():
         self.snake.draw() #rysuje snake'a
         self.apple = Apple(self.surface, self.kratka)
         self.apple.draw()
-        self.kolce = Kolce(self.surface, self.kratka)
-        self.kolce.draw()
+        self.kolce = []
+        for i in range(6):
+            self.kolce.append(Kolce(self.surface, self.kratka))
+            self.kolce[i].draw()
+            self.kolce[i].position(self.kratka)
         
         
     def eat_apple(self, x1, y1, x2, y2): #sprawdza czy snake zjadl jablko (jego glowa na miejscu owocu)
@@ -181,15 +184,17 @@ class Snakegame():
             #wyswietla jablko, snake'a i punkty
             while self.apple_on_tail():
                 self.apple.new_position()            
-            if self.eat_kolce(self.snake.x[0],self.snake.y[0],self.kolce.x,self.kolce.y):
-                self.kolce.position(self.kratka)
-                if self.snake.dlugosc < 1:
-                    game = False
+            for kolec in self.kolce:
+                if self.eat_kolce(self.snake.x[0],self.snake.y[0], kolec.x, kolec.y):
+                    kolec.position(self.kratka)
+                    if self.snake.dlugosc < 1:
+                        game = False
                     
             self.snake.walk() 
             self.apple.draw()
             self.show_score()
-            self.kolce.draw()
+            for kolec in self.kolce:
+                kolec.draw()
             pygame.display.flip() #update obrazu
             
             if self.snake.return_dlugosc()<5:
