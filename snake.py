@@ -195,7 +195,6 @@ class Snakegame():
             self.show_score()
             for kolec in self.kolce:
                 kolec.draw()
-            pygame.display.flip() #update obrazu
             
             if self.snake.return_dlugosc()<5:
                 time.sleep(0.2) #im wieksza wartosc tym wolniej snake chodzi
