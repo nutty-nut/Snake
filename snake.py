@@ -11,7 +11,7 @@ MAMY NEVERENDINGSTORYYY
 -----------------------------------"""
 class Apple():
     def __init__(self, okno, kratka):
-        self.image = pygame.image.load("apple.png").convert() 
+        self.image = pygame.image.load("apple.png").convert()
         self.owoce= [pygame.image.load("apple.png").convert(), pygame.image.load("cucumber.png").convert(),pygame.image.load("banana.png").convert(), pygame.image.load("cherry.png").convert(),pygame.image.load("orange.png").convert()]
         self.okno = okno
         self.size = kratka
@@ -40,9 +40,9 @@ class Kolce():
 
     def position(self, kratka):
         self.x=random.randint(0,29)*kratka
-        self.y=random.randint(0,19)*kratka        
+        self.y=random.randint(0,19)*kratka
 
-        
+
 class Snake():
     def __init__(self, okno, dlugosc, kratka):
         self.dlugosc = dlugosc
@@ -53,7 +53,7 @@ class Snake():
         self.x = [self.size]*dlugosc
         self.y =[self.size]*dlugosc
         self.direction = "down" #kierunek na poczatku
-        
+
     def return_dlugosc(self):
         return self.dlugosc
 
@@ -65,8 +65,8 @@ class Snake():
     def odejmij_ogon(self):
         self.dlugosc-=2
         self.x.append(-1)
-        self.y.append(-1)    
-        
+        self.y.append(-1)
+
     def draw(self):
         self.okno.fill((0,64,0))
         for i in range(self.dlugosc):
@@ -106,14 +106,14 @@ class Snake():
         elif self.direction=="right":
             self.x[0]+=self.size
             self.draw()
-
-    # def is_dead(self(:
+    is_dead = False
+    resurrect = False
 
 class Snakegame():
     def __init__(self):
         pygame.init()
         pygame.display.set_caption("Snake z przeszkodami") #nazwa gry
-        self.scrn_width, self.scrn_height = 900, 600 
+        self.scrn_width, self.scrn_height = 900, 600
         self.surface = pygame.display.set_mode((self.scrn_width, self.scrn_height)) #rysuje powierzchnie do gry
         self.surface.fill((0,64,0)) #kolorek, wybralam taki (teraz chyba juz ladny), ale ocencie sami
         self.kratka = 30
@@ -121,13 +121,10 @@ class Snakegame():
         self.snake.draw() #rysuje snake'a
         self.apple = Apple(self.surface, self.kratka)
         self.apple.draw()
-        self.kolce = []
-        for i in range(6):
-            self.kolce.append(Kolce(self.surface, self.kratka))
-            self.kolce[i].draw()
-            self.kolce[i].position(self.kratka)
-        
-        
+        self.kolce = Kolce(self.surface, self.kratka)
+        self.kolce.draw()
+
+
     def eat_apple(self, x1, y1, x2, y2): #sprawdza czy snake zjadl jablko (jego glowa na miejscu owocu)
         if x1==x2 and y1==y2:
             self.snake.dodaj_ogon()
@@ -141,18 +138,26 @@ class Snakegame():
             return True
         else:
             return False
-        
+
     def show_score(self):
         font = pygame.font.SysFont('comicsans',30) #ustala wlasciwosci czcionki
         score = font.render(f"Points: {self.snake.dlugosc - 1}", True, (255,255,255)) #kolor bialy, mozna zmienic ale imo jest ok
         self.surface.blit(score, (self.scrn_width - 300,10)) #pokazuje punkty
+
+    def show_death_screen(self):
+        font = pygame.font.SysFont('comicsans',30) #ustala wlasciwosci czcionki
+        score = font.render(f"You Died! Press Enter to try again", True, (255,255,255)) #kolor bialy, mozna zmienic ale imo jest ok
+        self.surface.blit(score, (self.scrn_width - 800,300)) #pokazuje tekst
+
+        if self.snake.resurrect == True:
+            self.snake=Snake(self.surface,1,self.kratka)
 
     def apple_on_tail(self):
         for i in range(0,self.snake.return_dlugosc()):
             if self.snake.x[i]==self.apple.x and self.snake.y[i]==self.apple.y:
                 print("japko na ogonie")
                 return True
-        return False        
+        return False
 
     def run(self):
         game = True
@@ -161,10 +166,10 @@ class Snakegame():
                 if event.type == pygame.QUIT: #zamyka okno
                     game = False
                 elif event.type == KEYDOWN:
-                    if event.key == K_ESCAPE: 
+                    if event.key == K_ESCAPE:
                         game=False
                     #rusza snake'm
-                    elif event.key == K_UP: 
+                    elif event.key == K_UP:
                         self.snake.move("up")
                     elif event.key == K_DOWN:
                         self.snake.move("down")
@@ -172,31 +177,45 @@ class Snakegame():
                         self.snake.move("right")
                     elif event.key == K_LEFT:
                         self.snake.move("left")
-                        
-            #jeśli dotknie ramki - koniec gry [messagebox orientacyjny!]
-            if self.snake.x[0] > 870 or self.snake.x[0] < 0 or self.snake.y[0] > 570 or self.snake.y[0] < 0:
-                time.sleep(1)
-                #tu może być messagebox z informacją o końcu gry
-                game = False
-                
-            if self.eat_apple(self.snake.x[0],self.snake.y[0],self.apple.x,self.apple.y): #nowa pozycja dla jablka
-                self.apple.new_position()
-            #wyswietla jablko, snake'a i punkty
-            while self.apple_on_tail():
-                self.apple.new_position()            
-            for kolec in self.kolce:
-                if self.eat_kolce(self.snake.x[0],self.snake.y[0], kolec.x, kolec.y):
-                    kolec.position(self.kratka)
-                    if self.snake.dlugosc < 1:
-                        game = False
-                    
-            self.snake.walk() 
-            self.apple.draw()
-            self.show_score()
-            for kolec in self.kolce:
-                kolec.draw()
+                    elif event.key == K_RETURN:
+                        self.snake.resurrect = True
+
+
+            if self.snake.is_dead == False:
+
+                #jesli zje ogon, zabij
+                for i in range(1, self.snake.dlugosc):
+                    if self.snake.x[0] == self.snake.x[i] and self.snake.y[0] == self.snake.y[i]:
+                        self.snake.is_dead = True
+                        self.snake.resurrect = False
+
+                #jeśli dotknie ramki - koniec gry [messagebox orientacyjny!]
+                if self.snake.x[0] > 870 or self.snake.x[0] < 0 or self.snake.y[0] > 570 or self.snake.y[0] < 0:
+                    self.snake.is_dead = True
+                    self.snake.resurrect = False
+
+                if self.eat_apple(self.snake.x[0],self.snake.y[0],self.apple.x,self.apple.y): #nowa pozycja dla jablka
+                    self.apple.new_position()
+                #wyswietla jablko, snake'a i punkty
+                while self.apple_on_tail():
+                    self.apple.new_position()
+                if self.eat_kolce(self.snake.x[0],self.snake.y[0],self.kolce.x,self.kolce.y):
+                    self.kolce.position(self.kratka)
+                if self.snake.dlugosc < 1:
+                    self.snake.is_dead = True
+                    self.snake.resurrect = False
+
+                self.snake.walk()
+                self.apple.draw()
+                self.kolce.draw()
+                self.show_score()
+
+
+            if self.snake.is_dead:
+                self.show_death_screen()
+
             pygame.display.flip() #update obrazu
-            
+
             if self.snake.return_dlugosc()<5:
                 time.sleep(0.2) #im wieksza wartosc tym wolniej snake chodzi
             elif self.snake.return_dlugosc()>=5 and self.snake.return_dlugosc()<10:
@@ -209,3 +228,4 @@ class Snakegame():
 
 game = Snakegame()
 game.run()
+
