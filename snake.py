@@ -183,8 +183,9 @@ class Snakegame():
                 self.apple.new_position()            
             if self.eat_kolce(self.snake.x[0],self.snake.y[0],self.kolce.x,self.kolce.y):
                 self.kolce.position(self.kratka)
-                # game = False
-                
+            if self.snake.dlugosc < 0:
+                    game = False
+                    
             self.snake.walk() 
             self.apple.draw()
             self.show_score()
