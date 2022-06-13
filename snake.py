@@ -167,6 +167,14 @@ class Snakegame():
                     elif event.key == K_LEFT:
                         self.snake.move("left")
 
+                                        #jesli zje ogon, zabij
+                for i in range(1, self.snake.dlugosc):
+                    if self.snake.x[0] == self.snake.x[i] and self.snake.y[0] == self.snake.y[i]:
+                        game=False
+                        messagebox.showinfo("Zjedzony ogon!")
+                        messagebox.showinfo("Koniec gry!")
+
+                        
             #jeśli dotknie ramki - koniec gry [messagebox orientacyjny!]
             if self.snake.x[0] > 870 or self.snake.x[0] < 0 or self.snake.y[0] > 570 or self.snake.y[0] < 0:
                 time.sleep(1)
